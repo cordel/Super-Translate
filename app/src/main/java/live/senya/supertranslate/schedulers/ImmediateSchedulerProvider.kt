@@ -1,14 +1,15 @@
 package live.senya.supertranslate.schedulers
 
-import io.reactivex.Scheduler
-import io.reactivex.schedulers.Schedulers
+import rx.Scheduler
+import rx.schedulers.Schedulers
+
 
 class ImmediateSchedulerProvider : BaseSchedulerProvider {
 
-    override fun computation(): Scheduler = Schedulers.trampoline()
+    override fun computation(): Scheduler = Schedulers.immediate()
 
-    override fun io(): Scheduler = Schedulers.trampoline()
+    override fun io(): Scheduler = Schedulers.immediate()
 
-    override fun ui(): Scheduler = Schedulers.trampoline()
+    override fun ui(): Scheduler = Schedulers.immediate()
 
 }

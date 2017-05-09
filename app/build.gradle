@@ -26,6 +26,8 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
+        exclude 'META-INF/rxjava.properties'
+
     }
 }
 
@@ -47,12 +49,16 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     // RxJava
-    compile "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
-    compile "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
-    compile "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
+    compile "io.reactivex:rxjava:$rxJavaVersion"
+    compile "io.reactivex:rxandroid:$rxAndroidVersion"
+    compile "io.reactivex:rxkotlin:$rxKotlinVersion"
+
+    // SqlBrite
+    compile "com.squareup.sqlbrite:sqlbrite:$sqlBriteVersion"
 
     // Retrofit
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    compile "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    compile "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
     compile "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
+
 }

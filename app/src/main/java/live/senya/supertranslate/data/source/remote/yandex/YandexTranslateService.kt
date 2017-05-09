@@ -1,9 +1,9 @@
 package live.senya.supertranslate.data.source.remote.yandex
 
-import io.reactivex.Observable
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
+import rx.Observable
 
 interface YandexTranslateService {
 
