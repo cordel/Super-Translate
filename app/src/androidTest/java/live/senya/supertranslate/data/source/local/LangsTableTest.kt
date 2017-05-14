@@ -3,15 +3,17 @@ package live.senya.supertranslate.data.source.local
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import live.senya.supertranslate.data.Lang
-import org.junit.Assert
+import live.senya.supertranslate.schedulers.ImmediateSchedulerProvider
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import rx.observers.TestSubscriber
 
 @RunWith(AndroidJUnit4::class) class LangsTableTest {
 
-    val localDataSource = TranslationsLocalDataSource(
-            InstrumentationRegistry.getTargetContext()
+    val localDataSource = TranslationsRxLocalDataSource(
+            InstrumentationRegistry.getTargetContext(),
+            ImmediateSchedulerProvider()
     )
 
     @Before fun setup() {
@@ -19,16 +21,21 @@ import org.junit.runner.RunWith
     }
 
     @Test fun saveLang_retrievesLangs() {
-        val lang0 = Lang("asd", "dsa", "zxc")
-        val lang1 = Lang("asd", "dsa", "zxc")
+        val langList = arrayListOf(Lang("asd", "dsa", "zxc"), Lang("asd", "dsa", "zxc"))
+        langList.forEach { localDataSource.saveLang(it) }
+        val testSubscriber = TestSubscriber<List<Lang>>()
 
-        localDataSource.saveLang(lang0)
-        localDataSource.saveLang(lang1)
+        localDataSource.getLangs().take(1).subscribe(testSubscriber)
+        testSubscriber.assertValues(langList)
+        testSubscriber.assertCompleted()
 
-        val langs = localDataSource.getLangs()
-        Assert.assertTrue(langs.size == 2)
-        Assert.assertTrue(langs.contains(lang0))
-        Assert.assertTrue(langs.contains(lang1))
+        val newLang = Lang("qq","ww", "ww")
+        val newList = ArrayList<Lang>(langList)
+        newList.add(newLang)
+
+        localDataSource.saveLang(newLang)
+        testSubscriber.assertValues(langList)
+
     }
 
 }
