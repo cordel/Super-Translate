@@ -6,7 +6,6 @@ import live.senya.supertranslate.data.Lang
 import live.senya.supertranslate.data.TextToTranslate
 import live.senya.supertranslate.data.Translation
 import live.senya.supertranslate.schedulers.ImmediateSchedulerProvider
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -38,7 +37,8 @@ import rx.observers.TestSubscriber
 
         localDataSource.saveLang(lang1)
         localDataSource.saveLang(lang2)
-        Assert.assertTrue(localDataSource.saveTranslation(translation) > 0)
+        localDataSource.saveTranslation(translation)
+
         localDataSource.getTranslation(textToTranslate).subscribe(testSubscriber)
 
         testSubscriber.assertValue(translation)

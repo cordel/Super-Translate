@@ -45,7 +45,7 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
                 .take(1)
     }
 
-    fun saveTranslation(translation: Translation): Long {
+    fun saveTranslation(translation: Translation) {
         val values = ContentValues()
 
         with(values) {
@@ -57,7 +57,7 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
             put(TranslationTable.COLUMN_NAME_ID, translation.id)
         }
 
-        return dbHelper.insert(TranslationTable.TABLE_NAME, values, SQLiteDatabase.CONFLICT_REPLACE)
+        dbHelper.insert(TranslationTable.TABLE_NAME, values, SQLiteDatabase.CONFLICT_REPLACE)
     }
 
     fun getTranslation(textToTranslate: TextToTranslate): Observable<Translation?> {
@@ -152,6 +152,5 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
                 id = id
         )
     }
-
 
 }

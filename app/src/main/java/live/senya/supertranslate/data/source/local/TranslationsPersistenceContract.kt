@@ -23,12 +23,8 @@ object TranslationTable {
     const val COLUMN_NAME_ORIGINAL_TEXT = "original_text"
     const val COLUMN_NAME_TRANSLATED_TEXT = "translated_text"
     const val COLUMN_NAME_IS_FAVORITE = "is_favorite"
-}
-
-object HistoryTable {
-    const val TABLE_NAME = "history"
-    const val COLUMN_NAME_TRANSLATION = "translation"
-    const val COLUMN_NAME_POSITION = "position"
+    const val COLUMN_NAME_HISTORY_POSITION = "history_position"
+    const val COLUMN_NAME_FAVORITE_POSITION = "favorite_position"
 }
 
 object UtilNames {
