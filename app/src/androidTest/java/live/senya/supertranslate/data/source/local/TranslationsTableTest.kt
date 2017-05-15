@@ -3,7 +3,6 @@ package live.senya.supertranslate.data.source.local
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import live.senya.supertranslate.data.Lang
-import live.senya.supertranslate.data.TextToTranslate
 import live.senya.supertranslate.data.Translation
 import live.senya.supertranslate.schedulers.ImmediateSchedulerProvider
 import org.junit.Before
@@ -21,29 +20,33 @@ import rx.observers.TestSubscriber
         InstrumentationRegistry.getTargetContext().deleteDatabase(TranslationsPersistenceContract.DB_NAME)
     }
 
+    //todo have some fun with locale, make it work. Override equals
     @Test fun saveTranslations_retrievesTranslations(){
-        val lang1 = Lang("asd","as","locale")
-        val lang2 = Lang("asasd","dsas","locale")
-        val textToTranslate = TextToTranslate(
-                sourceLang = lang1,
-                targetLang = lang2,
-                originalText = "text1"
-        )
-        val translation = Translation(
-                textToTranslate,
-                translatedText = "text2"
-        )
-        val testSubscriber = TestSubscriber<Translation?>()
+        val testSubscriber = TestSubscriber<List<Translation>>()
+        val lang = Lang("qw","qw","qw")
+        localDataSource.saveLang(lang)
 
-        localDataSource.saveLang(lang1)
-        localDataSource.saveLang(lang2)
-        localDataSource.saveTranslation(translation)
+        val translation1 = Translation(lang, lang, "123", "123")
+        val translation2 = Translation(lang, lang, "123", "123")
+        val translation3 = Translation(lang, lang, "123", "123")
+        val translation4 = Translation(lang, lang, "123", "123")
+        val translation5 = Translation(lang, lang, "123", "123")
+        val translation6 = Translation(lang, lang, "123", "123")
 
-        localDataSource.getTranslation(textToTranslate).subscribe(testSubscriber)
+        localDataSource.saveTranslation(translation1)
+        localDataSource.saveTranslation(translation2)
+        localDataSource.saveTranslation(translation3)
+        localDataSource.saveTranslation(translation4)
+        localDataSource.saveTranslation(translation5)
+        localDataSource.saveTranslation(translation6)
 
-        testSubscriber.assertValue(translation)
-        testSubscriber.assertCompleted()
-        testSubscriber.assertNoErrors()
+        val list: ArrayList<Translation>?
+        list = arrayListOf(translation3)
+        list.forEach { localDataSource.putTranslationOnTopOfHistory(it) }
 
+        localDataSource.getHistory()?.subscribe(testSubscriber)
+//        testSubscriber.assertCompleted()
+        testSubscriber.assertValue(list)
     }
+
 }

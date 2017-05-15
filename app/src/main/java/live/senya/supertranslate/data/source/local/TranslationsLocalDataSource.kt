@@ -120,6 +120,83 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
 
     }
 
+    fun putTranslationOnTopOfHistory(translation: Translation){
+        val sql = """
+            |UPDATE
+            |${TranslationTable.TABLE_NAME}
+            |SET
+            |${TranslationTable.COLUMN_NAME_HISTORY_POSITION}
+            |=
+                |ifnull
+                |(
+                    |(
+                    |SELECT
+                    |max(${TranslationTable.COLUMN_NAME_HISTORY_POSITION}) + 1
+                    |FROM
+                    |${TranslationTable.TABLE_NAME}
+                    |)
+                |,
+                    |0
+                |)
+            |WHERE
+            |${TranslationTable.COLUMN_NAME_ID}
+            |=
+            |'${translation.id}'
+            """.trimMargin()
+
+        dbHelper.execute(sql)
+    }
+
+    fun getHistory(): Observable<MutableList<Translation>>? {
+        val sourceLangSql = """
+            |(
+            |SELECT
+            |${LangTable.COLUMN_NAME_NAME}
+            |FROM
+            |${LangTable.TABLE_NAME}
+            |WHERE
+            |${LangTable.COLUMN_NAME_CODE} = ${TranslationTable.COLUMN_NAME_SOURCE_LANG}
+            |) AS
+            |${UtilNames.SOURCE}
+        """.trimMargin()
+        val targetLangSql = """
+            |(
+            |SELECT
+            |${LangTable.COLUMN_NAME_NAME}
+            |FROM
+            |${LangTable.TABLE_NAME}
+            |WHERE
+            |${LangTable.COLUMN_NAME_CODE} = ${TranslationTable.COLUMN_NAME_TARGET_LANG}
+            |)
+            |AS ${UtilNames.TARGET}
+        """.trimMargin()
+
+        val projection = arrayOf(
+                sourceLangSql,
+                targetLangSql,
+                TranslationTable.COLUMN_NAME_SOURCE_LANG,
+                TranslationTable.COLUMN_NAME_TARGET_LANG,
+                TranslationTable.COLUMN_NAME_ORIGINAL_TEXT,
+                TranslationTable.COLUMN_NAME_TRANSLATED_TEXT,
+                TranslationTable.COLUMN_NAME_IS_FAVORITE,
+                TranslationTable.COLUMN_NAME_ID
+        ).joinToString(", ")
+
+        val sql = """
+            |SELECT
+            |$projection
+            |FROM
+            |${TranslationTable.TABLE_NAME}
+            |WHERE
+            |${TranslationTable.COLUMN_NAME_HISTORY_POSITION} IS NOT NULL
+            |ORDER BY
+            |${TranslationTable.COLUMN_NAME_HISTORY_POSITION}
+        """.trimMargin()
+
+        return dbHelper.createQuery(TranslationTable.TABLE_NAME, sql)
+                .mapToList { mapTranslation(it) }
+                .take(1)
+    }
 
     private fun mapLang(c: Cursor): Lang {
         val code = c.getString(c.getColumnIndexOrThrow(LangTable.COLUMN_NAME_CODE))
