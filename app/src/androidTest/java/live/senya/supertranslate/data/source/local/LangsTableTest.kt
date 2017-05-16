@@ -21,20 +21,13 @@ import rx.observers.TestSubscriber
     }
 
     @Test fun saveLang_retrievesLangs() {
-        val langList = arrayListOf(Lang("asd", "dsa", "zxc"), Lang("asd", "dsa", "zxc"))
-        langList.forEach { localDataSource.saveLang(it) }
         val testSubscriber = TestSubscriber<List<Lang>>()
+        val langList = arrayListOf(Lang("asd", "dsa", "en"), Lang("asd", "dsa", "en"))
+        langList.forEach { localDataSource.saveLang(it) }
 
-        localDataSource.getLangs().take(1).subscribe(testSubscriber)
+        localDataSource.getLangs().subscribe(testSubscriber)
         testSubscriber.assertValues(langList)
         testSubscriber.assertCompleted()
-
-        val newLang = Lang("qq","ww", "ww")
-        val newList = ArrayList<Lang>(langList)
-        newList.add(newLang)
-
-        localDataSource.saveLang(newLang)
-        testSubscriber.assertValues(langList)
 
     }
 

@@ -14,6 +14,8 @@ import javax.inject.Inject
 
 class TranslationsRxLocalDataSource @Inject constructor(context: Context,
                                                         schedulerProvider: BaseSchedulerProvider) {
+//    private val currentLocale = Locale.getDefault().language
+    private val currentLocale = "en"
 
     private val dbHelper = SqlBrite.Builder()
             .build()
@@ -38,9 +40,17 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
                 LangTable.COLUMN_NAME_NAME,
                 LangTable.COLUMN_NAME_LOCALE
         ).joinToString(", ")
-        val sql = "SELECT $projection FROM ${LangTable.TABLE_NAME}"
 
-        return dbHelper.createQuery(LangTable.TABLE_NAME, sql)
+        val sql = """
+            |SELECT
+            |$projection
+            |FROM
+            |${LangTable.TABLE_NAME}
+            |WHERE
+            |${LangTable.COLUMN_NAME_LOCALE} = ?
+        """.trimMargin()
+
+        return dbHelper.createQuery(LangTable.TABLE_NAME, sql, currentLocale)
                 .mapToList { mapLang(it) }
                 .take(1)
     }
@@ -69,6 +79,8 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
             |${LangTable.TABLE_NAME}
             |WHERE
             |${LangTable.COLUMN_NAME_CODE} = ${TranslationTable.COLUMN_NAME_SOURCE_LANG}
+            |AND
+            |${LangTable.COLUMN_NAME_LOCALE} = $currentLocale
             |) AS
             |${UtilNames.SOURCE}
         """.trimMargin()
@@ -80,6 +92,8 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
             |${LangTable.TABLE_NAME}
             |WHERE
             |${LangTable.COLUMN_NAME_CODE} = ${TranslationTable.COLUMN_NAME_TARGET_LANG}
+            |AND
+            |${LangTable.COLUMN_NAME_LOCALE} = $currentLocale
             |)
             |AS ${UtilNames.TARGET}
         """.trimMargin()
@@ -156,6 +170,8 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
             |${LangTable.TABLE_NAME}
             |WHERE
             |${LangTable.COLUMN_NAME_CODE} = ${TranslationTable.COLUMN_NAME_SOURCE_LANG}
+            |AND
+            |${LangTable.COLUMN_NAME_LOCALE} = $currentLocale
             |) AS
             |${UtilNames.SOURCE}
         """.trimMargin()
@@ -167,6 +183,8 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
             |${LangTable.TABLE_NAME}
             |WHERE
             |${LangTable.COLUMN_NAME_CODE} = ${TranslationTable.COLUMN_NAME_TARGET_LANG}
+            |AND
+            |${LangTable.COLUMN_NAME_LOCALE} = $currentLocale
             |)
             |AS ${UtilNames.TARGET}
         """.trimMargin()
@@ -221,9 +239,9 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
         val id = c.getString(c.getColumnIndexOrThrow(TranslationTable.COLUMN_NAME_ID))
 
         return Translation(
-                sourceLang = Lang(langCodeSource, langNameSource, "locale"),
+                sourceLang = Lang(langCodeSource, langNameSource, "currentLocale"),
                 originalText = originalText,
-                targetLang = Lang(langCodeTarget, langNameTarget, "locale"),
+                targetLang = Lang(langCodeTarget, langNameTarget, "currentLocale"),
                 translatedText = translatedText,
                 isFavorite = isFavorite,
                 id = id
