@@ -11,7 +11,7 @@ interface YandexTranslateService {
     @POST("tr.json/translate")
     fun translate(@Field("key") key: String,
                   @Field("text") text: String,
-                  @Field("lang") lang: String): Observable<YandexTranslationResponse>
+                  @Field("lang") lang: String): Observable<YandexTranslateResponse>
 
 
 }
