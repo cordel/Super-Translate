@@ -14,8 +14,38 @@ import javax.inject.Inject
 
 class TranslationsRxLocalDataSource @Inject constructor(context: Context,
                                                         schedulerProvider: BaseSchedulerProvider) {
-//    private val currentLocale = Locale.getDefault().language
+    //todo think about saving list of supported langs. Options: store in db, store in resources.
+
+    //    private val currentLocale = Locale.getDefault().language
     private val currentLocale = "en"
+
+    private val selectSourceLangSql = """
+            |(
+            |SELECT
+            |${LangTable.COLUMN_NAME_NAME}
+            |FROM
+            |${LangTable.TABLE_NAME}
+            |WHERE
+            |${LangTable.COLUMN_NAME_CODE} = ${TranslationTable.COLUMN_NAME_SOURCE_LANG}
+            |AND
+            |${LangTable.COLUMN_NAME_LOCALE} = '$currentLocale'
+            |) AS
+            |${UtilNames.SOURCE}
+        """.trimMargin()
+
+    private val selectTargetLangSql = """
+            |(
+            |SELECT
+            |${LangTable.COLUMN_NAME_NAME}
+            |FROM
+            |${LangTable.TABLE_NAME}
+            |WHERE
+            |${LangTable.COLUMN_NAME_CODE} = ${TranslationTable.COLUMN_NAME_TARGET_LANG}
+            |AND
+            |${LangTable.COLUMN_NAME_LOCALE} = '$currentLocale'
+            |)
+            |AS ${UtilNames.TARGET}
+        """.trimMargin()
 
     private val dbHelper = SqlBrite.Builder()
             .build()
@@ -71,36 +101,10 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
     }
 
     fun getTranslation(textToTranslate: TextToTranslate): Observable<Translation?> {
-        val sourceLangSql = """
-            |(
-            |SELECT
-            |${LangTable.COLUMN_NAME_NAME}
-            |FROM
-            |${LangTable.TABLE_NAME}
-            |WHERE
-            |${LangTable.COLUMN_NAME_CODE} = ${TranslationTable.COLUMN_NAME_SOURCE_LANG}
-            |AND
-            |${LangTable.COLUMN_NAME_LOCALE} = $currentLocale
-            |) AS
-            |${UtilNames.SOURCE}
-        """.trimMargin()
-        val targetLangSql = """
-            |(
-            |SELECT
-            |${LangTable.COLUMN_NAME_NAME}
-            |FROM
-            |${LangTable.TABLE_NAME}
-            |WHERE
-            |${LangTable.COLUMN_NAME_CODE} = ${TranslationTable.COLUMN_NAME_TARGET_LANG}
-            |AND
-            |${LangTable.COLUMN_NAME_LOCALE} = $currentLocale
-            |)
-            |AS ${UtilNames.TARGET}
-        """.trimMargin()
 
         val projection = arrayOf(
-                sourceLangSql,
-                targetLangSql,
+                selectSourceLangSql,
+                selectTargetLangSql,
                 TranslationTable.COLUMN_NAME_SOURCE_LANG,
                 TranslationTable.COLUMN_NAME_TARGET_LANG,
                 TranslationTable.COLUMN_NAME_ORIGINAL_TEXT,
@@ -134,7 +138,7 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
 
     }
 
-    fun putTranslationOnTopOfHistory(translation: Translation){
+    fun putTranslationOnTopOfHistory(translation: Translation) {
         val sql = """
             |UPDATE
             |${TranslationTable.TABLE_NAME}
@@ -162,36 +166,10 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
     }
 
     fun getHistory(): Observable<MutableList<Translation>>? {
-        val sourceLangSql = """
-            |(
-            |SELECT
-            |${LangTable.COLUMN_NAME_NAME}
-            |FROM
-            |${LangTable.TABLE_NAME}
-            |WHERE
-            |${LangTable.COLUMN_NAME_CODE} = ${TranslationTable.COLUMN_NAME_SOURCE_LANG}
-            |AND
-            |${LangTable.COLUMN_NAME_LOCALE} = $currentLocale
-            |) AS
-            |${UtilNames.SOURCE}
-        """.trimMargin()
-        val targetLangSql = """
-            |(
-            |SELECT
-            |${LangTable.COLUMN_NAME_NAME}
-            |FROM
-            |${LangTable.TABLE_NAME}
-            |WHERE
-            |${LangTable.COLUMN_NAME_CODE} = ${TranslationTable.COLUMN_NAME_TARGET_LANG}
-            |AND
-            |${LangTable.COLUMN_NAME_LOCALE} = $currentLocale
-            |)
-            |AS ${UtilNames.TARGET}
-        """.trimMargin()
 
         val projection = arrayOf(
-                sourceLangSql,
-                targetLangSql,
+                selectSourceLangSql,
+                selectTargetLangSql,
                 TranslationTable.COLUMN_NAME_SOURCE_LANG,
                 TranslationTable.COLUMN_NAME_TARGET_LANG,
                 TranslationTable.COLUMN_NAME_ORIGINAL_TEXT,
@@ -239,9 +217,9 @@ class TranslationsRxLocalDataSource @Inject constructor(context: Context,
         val id = c.getString(c.getColumnIndexOrThrow(TranslationTable.COLUMN_NAME_ID))
 
         return Translation(
-                sourceLang = Lang(langCodeSource, langNameSource, "currentLocale"),
+                sourceLang = Lang(langCodeSource, langNameSource, currentLocale),
                 originalText = originalText,
-                targetLang = Lang(langCodeTarget, langNameTarget, "currentLocale"),
+                targetLang = Lang(langCodeTarget, langNameTarget, currentLocale),
                 translatedText = translatedText,
                 isFavorite = isFavorite,
                 id = id

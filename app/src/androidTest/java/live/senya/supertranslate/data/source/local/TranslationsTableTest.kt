@@ -23,7 +23,7 @@ import rx.observers.TestSubscriber
     //todo have some fun with locale, make it work. Override equals
     @Test fun saveTranslations_retrievesTranslations(){
         val testSubscriber = TestSubscriber<List<Translation>>()
-        val lang = Lang("qw","qw","qw")
+        val lang = Lang("qw","qw","en")
         localDataSource.saveLang(lang)
 
         val translation1 = Translation(lang, lang, "123", "123")
@@ -41,11 +41,14 @@ import rx.observers.TestSubscriber
         localDataSource.saveTranslation(translation6)
 
         val list: ArrayList<Translation>?
-        list = arrayListOf(translation3)
+        list = arrayListOf(translation3, translation2, translation5, translation6)
         list.forEach { localDataSource.putTranslationOnTopOfHistory(it) }
+        localDataSource.putTranslationOnTopOfHistory(translation5)
+        list[2] = list[3]
+        list[3] = translation5
 
         localDataSource.getHistory()?.subscribe(testSubscriber)
-//        testSubscriber.assertCompleted()
+        testSubscriber.assertCompleted()
         testSubscriber.assertValue(list)
     }
 
