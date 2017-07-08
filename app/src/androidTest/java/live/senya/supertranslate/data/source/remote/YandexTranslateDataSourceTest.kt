@@ -19,9 +19,13 @@ import org.junit.runner.RunWith
     fun getTranslation_multipleWordsGiven_correctTranslationTextReturned() {
 
         val yandex = YandexTranslateDataSource(ImmediateSchedulerProvider(), context)
-        val translationObs = yandex.getTranslation(TextToTranslate(sourceLang = Lang("en", "ENGLISH", "en"),
-                targetLang = Lang("ru", "RUSSIAN", "en"),
-                originalText = "Hello, how are you? Whanna hang out?"))
+        val translationObs = yandex.getTranslation(
+                TextToTranslate(
+                        sourceLang = Lang("en", "ENGLISH", "en"),
+                        targetLang = Lang("ru", "RUSSIAN", "en"),
+                        originalText = "Hello, how are you? Whanna hang out?"
+                )
+        )
         val expectedTranslation = "Привет, как ты? Whanna потусоваться?"
 
         var translatedText: String = ""

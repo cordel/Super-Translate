@@ -29,9 +29,11 @@ class YandexTranslateDataSource @Inject constructor(val schedulerProvider: BaseS
                     .create(YandexTranslateService::class.java)
 
     fun getTranslation(textToTranslate: TextToTranslate): Observable<Translation> =
-            yandexTranslateService.translate(key = apiKey,
+            yandexTranslateService.translate(
+                    key = apiKey,
                     lang = getTranslationDirection(textToTranslate),
-                    text = textToTranslate.originalText)
+                    text = textToTranslate.originalText
+            )
                     .subscribeOn(schedulerProvider.io())
                     .map { Translation(textToTranslate, it.text[0]) }
                     .observeOn(schedulerProvider.ui())
