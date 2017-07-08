@@ -3,7 +3,12 @@ package live.senya.supertranslate.data
 import android.os.Parcel
 import android.os.Parcelable
 
-data class Lang(val code: String, val name: String, val locale: String) : Parcelable {
+/**
+ * Immutable class that represents Language.
+ */
+data class Lang(val code: String,
+                val name: String,
+                val locale: String) : Parcelable {
 
     companion object {
         @JvmField val CREATOR: Parcelable.Creator<Lang> = object : Parcelable.Creator<Lang> {

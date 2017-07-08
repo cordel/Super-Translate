@@ -2,6 +2,9 @@ package live.senya.supertranslate.data
 
 import java.util.*
 
+/**
+ * Immutable class that represents Translation.
+ */
 data class Translation(val sourceLang: Lang,
                        val targetLang: Lang,
                        val originalText: String,
