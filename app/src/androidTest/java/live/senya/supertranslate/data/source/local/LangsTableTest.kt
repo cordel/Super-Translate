@@ -1,31 +1,28 @@
 package live.senya.supertranslate.data.source.local
 
-import android.support.test.InstrumentationRegistry
-import android.support.test.runner.AndroidJUnit4
 import io.reactivex.observers.TestObserver
 import live.senya.supertranslate.data.Lang
-import live.senya.supertranslate.schedulers.ImmediateSchedulerProvider
-import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class) class LangsTableTest {
+class LangsTableTest : BaseLocalDataSourceTest() {
 
-    val localDataSource = LocalDataSource(
-            InstrumentationRegistry.getTargetContext(),
-            ImmediateSchedulerProvider()
+    val langList = arrayListOf(
+            Lang("code1", "name1", testLocale),
+            Lang("code2", "name2", testLocale),
+            Lang("code3", "name3", testLocale)
     )
 
-    @Before fun setup() {
-        InstrumentationRegistry.getTargetContext().deleteDatabase(TranslationsPersistenceContract.DB_NAME)
+    override fun setUp() {
+        super.setUp()
     }
 
     @Test fun saveLang_retrievesLangs() {
         val testObserver = TestObserver<List<Lang>>()
-        val langList = arrayListOf(Lang("asd", "dsa", "en"), Lang("asd", "dsa", "en"))
+
         langList.forEach { localDataSource.saveLang(it) }
 
         localDataSource.getLangs().subscribe(testObserver)
+
         testObserver.assertValues(langList)
         testObserver.assertComplete()
     }

@@ -6,12 +6,10 @@ import com.squareup.sqlbrite2.SqlBrite
 import live.senya.supertranslate.data.Lang
 import live.senya.supertranslate.data.Translation
 import live.senya.supertranslate.schedulers.BaseSchedulerProvider
-import java.util.*
 
 abstract class BaseLocalDataSource(context: Context,
-                                   schedulerProvider: BaseSchedulerProvider) {
-
-    val currentLocale: String = Locale.getDefault().language
+                                   schedulerProvider: BaseSchedulerProvider,
+                                   val currentLocale: String ) {
 
     val selectSourceLangSql = """
             |(

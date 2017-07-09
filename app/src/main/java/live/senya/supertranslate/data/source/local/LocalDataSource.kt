@@ -8,10 +8,13 @@ import live.senya.supertranslate.data.Lang
 import live.senya.supertranslate.data.TextToTranslate
 import live.senya.supertranslate.data.Translation
 import live.senya.supertranslate.schedulers.BaseSchedulerProvider
+import java.util.*
 import javax.inject.Inject
 
-class LocalDataSource @Inject constructor (context: Context, schedulerProvider: BaseSchedulerProvider) :
-        BaseLocalDataSource(context, schedulerProvider) {
+class LocalDataSource @Inject constructor(context: Context,
+                                          schedulerProvider: BaseSchedulerProvider,
+                                          currentLocale: String = Locale.getDefault().language) :
+        BaseLocalDataSource(context, schedulerProvider, currentLocale) {
 
     fun saveLang(lang: Lang) {
         val values = ContentValues()
@@ -126,7 +129,7 @@ class LocalDataSource @Inject constructor (context: Context, schedulerProvider: 
         dbHelper.execute(sql)
     }
 
-    fun getHistory(): Observable<MutableList<Translation>>? {
+    fun getHistory(): Observable<MutableList<Translation>> {
         val projection = arrayOf(
                 selectSourceLangSql,
                 selectTargetLangSql,
@@ -152,5 +155,34 @@ class LocalDataSource @Inject constructor (context: Context, schedulerProvider: 
         return dbHelper.createQuery(TranslationTable.TABLE_NAME, sql)
                 .mapToList { mapTranslation(it) }
                 .take(1)
+    }
+
+    fun getHistoryUpdates(): Observable<Translation> {
+        val projection = arrayOf(
+                selectSourceLangSql,
+                selectTargetLangSql,
+                TranslationTable.COLUMN_NAME_SOURCE_LANG,
+                TranslationTable.COLUMN_NAME_TARGET_LANG,
+                TranslationTable.COLUMN_NAME_ORIGINAL_TEXT,
+                TranslationTable.COLUMN_NAME_TRANSLATED_TEXT,
+                TranslationTable.COLUMN_NAME_IS_FAVORITE,
+                TranslationTable.COLUMN_NAME_ID
+        ).joinToString(", ")
+
+        val sql = """
+            |SELECT
+            |$projection
+            |FROM
+            |${TranslationTable.TABLE_NAME}
+            |WHERE
+            |${TranslationTable.COLUMN_NAME_HISTORY_POSITION} IS NOT NULL
+            |ORDER BY
+            |${TranslationTable.COLUMN_NAME_HISTORY_POSITION} DESC
+            |LIMIT 1
+        """.trimMargin()
+
+        return dbHelper.createQuery(TranslationTable.TABLE_NAME, sql)
+                .mapToOne { mapTranslation(it) }
+                .skip(1)
     }
 }
