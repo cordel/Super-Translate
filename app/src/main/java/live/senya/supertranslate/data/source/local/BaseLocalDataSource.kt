@@ -9,7 +9,7 @@ import live.senya.supertranslate.schedulers.BaseSchedulerProvider
 
 abstract class BaseLocalDataSource(context: Context,
                                    schedulerProvider: BaseSchedulerProvider,
-                                   val currentLocale: String ) {
+                                   val currentLocale: String) {
 
     val selectSourceLangSql = """
             |(
