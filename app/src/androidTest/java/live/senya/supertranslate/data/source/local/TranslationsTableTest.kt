@@ -2,16 +2,16 @@ package live.senya.supertranslate.data.source.local
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
+import io.reactivex.observers.TestObserver
 import live.senya.supertranslate.data.Lang
 import live.senya.supertranslate.data.Translation
 import live.senya.supertranslate.schedulers.ImmediateSchedulerProvider
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import rx.observers.TestSubscriber
 
 @RunWith(AndroidJUnit4::class) class TranslationsTableTest {
-    val localDataSource = TranslationsRxLocalDataSource(
+    val localDataSource = LocalDataSource(
             InstrumentationRegistry.getTargetContext(),
             ImmediateSchedulerProvider()
     )
@@ -20,9 +20,9 @@ import rx.observers.TestSubscriber
         InstrumentationRegistry.getTargetContext().deleteDatabase(TranslationsPersistenceContract.DB_NAME)
     }
 
-    //todo have some fun with locale, make it work. Override equals
+//    todo have some fun with locale, make it work. Override equals
     @Test fun saveTranslations_retrievesTranslations(){
-        val testSubscriber = TestSubscriber<List<Translation>>()
+        val testSubscriber = TestObserver<List<Translation>>()
         val lang = Lang("qw","qw","en")
         localDataSource.saveLang(lang)
 
@@ -48,7 +48,7 @@ import rx.observers.TestSubscriber
         list[3] = translation5
 
         localDataSource.getHistory()?.subscribe(testSubscriber)
-        testSubscriber.assertCompleted()
+        testSubscriber.assertComplete()
         testSubscriber.assertValue(list)
     }
 

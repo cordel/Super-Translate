@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import live.senya.supertranslate.data.source.local.TranslationsPersistenceContract.DbInfo.DB_NAME
 import live.senya.supertranslate.data.source.local.TranslationsPersistenceContract.DbInfo.DB_VERSION
 
-class TranslationsDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
+class DbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {
         with(db!!) {

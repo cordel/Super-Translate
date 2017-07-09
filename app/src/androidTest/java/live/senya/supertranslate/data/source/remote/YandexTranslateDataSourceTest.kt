@@ -29,7 +29,7 @@ import org.junit.runner.RunWith
         val expectedTranslation = "Привет, как ты? Whanna потусоваться?"
 
         var translatedText: String = ""
-        translationObs.subscribe { translatedText = it.translatedText }
+        translationObs.subscribe { t1, t2 -> translatedText = t1.translatedText }
 
         Assert.assertEquals(expectedTranslation, translatedText)
 

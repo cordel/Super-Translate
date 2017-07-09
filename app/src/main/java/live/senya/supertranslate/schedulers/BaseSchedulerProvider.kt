@@ -1,6 +1,6 @@
 package live.senya.supertranslate.schedulers
 
-import rx.Scheduler
+import io.reactivex.Scheduler
 
 interface BaseSchedulerProvider {
 
