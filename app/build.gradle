@@ -49,16 +49,15 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     // RxJava
-    compile "io.reactivex:rxjava:$rxJavaVersion"
-    compile "io.reactivex:rxandroid:$rxAndroidVersion"
-    compile "io.reactivex:rxkotlin:$rxKotlinVersion"
+    compile "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
+    compile "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
 
     // SqlBrite
-    compile "com.squareup.sqlbrite:sqlbrite:$sqlBriteVersion"
+    compile "com.squareup.sqlbrite2:sqlbrite:$sqlBriteVersion"
 
     // Retrofit
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    compile "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
+    compile "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     compile "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
 
 }
