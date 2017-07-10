@@ -3,7 +3,9 @@ package live.senya.supertranslate.data.source.local
 import android.content.Context
 import android.database.Cursor
 import com.squareup.sqlbrite2.SqlBrite
+import io.reactivex.Observable
 import live.senya.supertranslate.data.Lang
+import live.senya.supertranslate.data.TextToTranslate
 import live.senya.supertranslate.data.Translation
 import live.senya.supertranslate.schedulers.BaseSchedulerProvider
 
@@ -11,7 +13,7 @@ abstract class BaseLocalDataSource(context: Context,
                                    schedulerProvider: BaseSchedulerProvider,
                                    val currentLocale: String) {
 
-    val selectSourceLangSql = """
+    protected val selectSourceLangSql = """
             |(
             |SELECT
             |${LangTable.COLUMN_NAME_NAME}
@@ -25,7 +27,7 @@ abstract class BaseLocalDataSource(context: Context,
             |${UtilNames.SOURCE}
         """.trimMargin()
 
-    val selectTargetLangSql = """
+    protected val selectTargetLangSql = """
             |(
             |SELECT
             |${LangTable.COLUMN_NAME_NAME}
@@ -39,14 +41,14 @@ abstract class BaseLocalDataSource(context: Context,
             |AS ${UtilNames.TARGET}
         """.trimMargin()
 
-    val dbHelper = SqlBrite.Builder()
+    protected val dbHelper = SqlBrite.Builder()
             .build()
             .wrapDatabaseHelper(
                     DbHelper(context),
                     schedulerProvider.io()
             )
 
-    fun mapLang(c: Cursor): Lang {
+    protected fun mapLang(c: Cursor): Lang {
         val code = c.getString(c.getColumnIndexOrThrow(LangTable.COLUMN_NAME_CODE))
         val name = c.getString(c.getColumnIndexOrThrow(LangTable.COLUMN_NAME_NAME))
         val locale = c.getString(c.getColumnIndexOrThrow(LangTable.COLUMN_NAME_LOCALE))
@@ -58,7 +60,7 @@ abstract class BaseLocalDataSource(context: Context,
         )
     }
 
-    fun mapTranslation(c: Cursor): Translation {
+    protected fun mapTranslation(c: Cursor): Translation {
         val langCodeSource = c.getString(c.getColumnIndexOrThrow(TranslationTable.COLUMN_NAME_SOURCE_LANG))
         val langNameSource = c.getString(c.getColumnIndexOrThrow(UtilNames.SOURCE))
         val langCodeTarget = c.getString(c.getColumnIndexOrThrow(TranslationTable.COLUMN_NAME_TARGET_LANG))
@@ -77,5 +79,19 @@ abstract class BaseLocalDataSource(context: Context,
                 id = id
         )
     }
+
+    abstract fun saveLang(lang: Lang)
+
+    abstract fun getLangs(): Observable<List<Lang>>
+
+    abstract fun saveTranslation(translation: Translation)
+
+    abstract fun getTranslation(textToTranslate: TextToTranslate): Observable<Translation>
+
+    abstract fun putTranslationOnTopOfHistory(translation: Translation)
+
+    abstract fun getHistory(): Observable<MutableList<Translation>>
+
+    abstract fun getHistoryUpdates(): Observable<Translation>
 
 }

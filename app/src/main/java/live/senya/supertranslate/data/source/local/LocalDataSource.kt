@@ -16,7 +16,7 @@ class LocalDataSource @Inject constructor(context: Context,
                                           currentLocale: String = Locale.getDefault().language) :
         BaseLocalDataSource(context, schedulerProvider, currentLocale) {
 
-    fun saveLang(lang: Lang) {
+    override fun saveLang(lang: Lang) {
         val values = ContentValues()
 
         with(values) {
@@ -28,7 +28,7 @@ class LocalDataSource @Inject constructor(context: Context,
         dbHelper.insert(LangTable.TABLE_NAME, values, SQLiteDatabase.CONFLICT_REPLACE)
     }
 
-    fun getLangs(): Observable<List<Lang>> {
+    override fun getLangs(): Observable<List<Lang>> {
         val projection = arrayOf(
                 LangTable.COLUMN_NAME_CODE,
                 LangTable.COLUMN_NAME_NAME,
@@ -49,7 +49,7 @@ class LocalDataSource @Inject constructor(context: Context,
                 .take(1)
     }
 
-    fun saveTranslation(translation: Translation) {
+    override fun saveTranslation(translation: Translation) {
         val values = ContentValues()
 
         with(values) {
@@ -64,7 +64,7 @@ class LocalDataSource @Inject constructor(context: Context,
         dbHelper.insert(TranslationTable.TABLE_NAME, values, SQLiteDatabase.CONFLICT_REPLACE)
     }
 
-    fun getTranslation(textToTranslate: TextToTranslate): Observable<Translation> {
+    override fun getTranslation(textToTranslate: TextToTranslate): Observable<Translation> {
 
         val projection = arrayOf(
                 selectSourceLangSql,
@@ -102,7 +102,7 @@ class LocalDataSource @Inject constructor(context: Context,
 
     }
 
-    fun putTranslationOnTopOfHistory(translation: Translation) {
+    override fun putTranslationOnTopOfHistory(translation: Translation) {
         val sql = """
             |UPDATE
             |${TranslationTable.TABLE_NAME}
@@ -129,7 +129,7 @@ class LocalDataSource @Inject constructor(context: Context,
         dbHelper.execute(sql)
     }
 
-    fun getHistory(): Observable<MutableList<Translation>> {
+    override fun getHistory(): Observable<MutableList<Translation>> {
         val projection = arrayOf(
                 selectSourceLangSql,
                 selectTargetLangSql,
@@ -157,7 +157,7 @@ class LocalDataSource @Inject constructor(context: Context,
                 .take(1)
     }
 
-    fun getHistoryUpdates(): Observable<Translation> {
+    override fun getHistoryUpdates(): Observable<Translation> {
         val projection = arrayOf(
                 selectSourceLangSql,
                 selectTargetLangSql,
