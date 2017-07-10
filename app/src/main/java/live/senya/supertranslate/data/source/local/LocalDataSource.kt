@@ -96,9 +96,18 @@ class LocalDataSource @Inject constructor(context: Context,
                 textToTranslate.originalText
         )
 
-        return dbHelper.createQuery(TranslationTable.TABLE_NAME, sql, *selectionArgs)
-                .mapToOne { mapTranslation(it) }
-                .take(1)
+        return Observable.create<Translation> {
+            try {
+                val c = dbHelper.query(sql, *selectionArgs)
+                if (c.count > 0){
+                    c.moveToNext()
+                    it.onNext(mapTranslation(c))
+                }
+                it.onComplete()
+            } catch (e: Exception) {
+                it.onError(e)
+            }
+        }
 
     }
 
