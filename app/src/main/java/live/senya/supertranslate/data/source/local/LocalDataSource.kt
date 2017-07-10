@@ -97,7 +97,7 @@ class LocalDataSource @Inject constructor(context: Context,
         )
 
         return dbHelper.createQuery(TranslationTable.TABLE_NAME, sql, *selectionArgs)
-                .mapToOne({ mapTranslation(it) })
+                .mapToOne { mapTranslation(it) }
                 .take(1)
 
     }

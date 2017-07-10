@@ -1,7 +1,7 @@
 package live.senya.supertranslate.data.source.remote.yandex
 
 import android.content.Context
-import io.reactivex.Single
+import io.reactivex.Observable
 import live.senya.supertranslate.R
 import live.senya.supertranslate.data.TextToTranslate
 import live.senya.supertranslate.data.Translation
@@ -11,8 +11,8 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 
-class YandexTranslateDataSource @Inject constructor(val schedulerProvider: BaseSchedulerProvider,
-                                                    context: Context) {
+class YandexTranslateDataSource @Inject constructor(context: Context,
+                                                    private val schedulerProvider: BaseSchedulerProvider) {
 
     companion object {
         private const val SERVICE_URL = "https://translate.yandex.net/api/v1.5/"
@@ -28,7 +28,7 @@ class YandexTranslateDataSource @Inject constructor(val schedulerProvider: BaseS
                     .build()
                     .create(YandexTranslateService::class.java)
 
-    fun getTranslation(textToTranslate: TextToTranslate): Single<Translation> =
+    fun getTranslation(textToTranslate: TextToTranslate): Observable<Translation> =
             yandexTranslateService.translate(
                     key = apiKey,
                     lang = getTranslationDirection(textToTranslate),

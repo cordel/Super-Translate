@@ -28,4 +28,13 @@ class TranslationsTableTest : BaseLocalDataSourceTest() {
         testObserver.assertComplete()
     }
 
+    @Test fun emptyRequestCompletesAnyway() {
+        val testObserver = TestObserver<Translation>()
+
+        localDataSource.getTranslation(textToTranslate).subscribe(testObserver)
+
+        testObserver.assertNoValues()
+        testObserver.assertComplete()
+    }
+
 }
