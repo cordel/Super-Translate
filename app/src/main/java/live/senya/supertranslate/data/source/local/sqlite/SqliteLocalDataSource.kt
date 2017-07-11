@@ -5,7 +5,9 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.squareup.sqlbrite2.SqlBrite
+import io.reactivex.Maybe
 import io.reactivex.Observable
+import io.reactivex.Single
 import live.senya.supertranslate.data.Lang
 import live.senya.supertranslate.data.TextToTranslate
 import live.senya.supertranslate.data.Translation
@@ -63,7 +65,7 @@ class SqliteLocalDataSource(context: Context,
         dbHelper.insert(LangTable.TABLE_NAME, values, SQLiteDatabase.CONFLICT_REPLACE)
     }
 
-    override fun getLangs(): Observable<List<Lang>> {
+    override fun getLangs(): Single<List<Lang>> {
         val projection = arrayOf(
                 LangTable.COLUMN_NAME_CODE,
                 LangTable.COLUMN_NAME_NAME,
@@ -79,9 +81,7 @@ class SqliteLocalDataSource(context: Context,
             |${LangTable.COLUMN_NAME_LOCALE} = ?
         """.trimMargin()
 
-        return dbHelper.createQuery(LangTable.TABLE_NAME, sql, currentLocale)
-                .mapToList { mapLang(it) }
-                .take(1)
+        return dbHelper.query(sql, currentLocale).createListWrappedIntoSingleFromCursor { mapLang(it) }
     }
 
     override fun saveTranslation(translation: Translation) {
@@ -99,7 +99,7 @@ class SqliteLocalDataSource(context: Context,
         dbHelper.insert(TranslationTable.TABLE_NAME, values, SQLiteDatabase.CONFLICT_REPLACE)
     }
 
-    override fun getTranslation(textToTranslate: TextToTranslate): Observable<Translation> {
+    override fun getTranslation(textToTranslate: TextToTranslate): Maybe<Translation> {
 
         val projection = arrayOf(
                 selectSourceLangSql,
@@ -131,16 +131,18 @@ class SqliteLocalDataSource(context: Context,
                 textToTranslate.originalText
         )
 
-        return Observable.create<Translation> {
+        return Maybe.create { e ->
             try {
-                val c = dbHelper.query(sql, *selectionArgs)
-                if (c.count > 0) {
-                    c.moveToNext()
-                    it.onNext(mapTranslation(c))
+                dbHelper.query(sql, *selectionArgs).use {
+                    if (it.count > 0) {
+                        it.moveToFirst()
+                        e.onSuccess(mapTranslation(it))
+                    } else {
+                        e.onComplete()
+                    }
                 }
-                it.onComplete()
-            } catch (e: Exception) {
-                it.onError(e)
+            } catch (exc: RuntimeException) {
+                e.onError(exc)
             }
         }
 
@@ -173,7 +175,7 @@ class SqliteLocalDataSource(context: Context,
         dbHelper.execute(sql)
     }
 
-    override fun getHistory(): Observable<MutableList<Translation>> {
+    override fun getHistory(): Single<List<Translation>> {
         val projection = arrayOf(
                 selectSourceLangSql,
                 selectTargetLangSql,
@@ -196,9 +198,7 @@ class SqliteLocalDataSource(context: Context,
             |${TranslationTable.COLUMN_NAME_HISTORY_POSITION}
         """.trimMargin()
 
-        return dbHelper.createQuery(TranslationTable.TABLE_NAME, sql)
-                .mapToList { mapTranslation(it) }
-                .take(1)
+        return dbHelper.query(sql).createListWrappedIntoSingleFromCursor { mapTranslation(it) }
     }
 
     override fun getHistoryUpdates(): Observable<Translation> {
@@ -260,5 +260,27 @@ class SqliteLocalDataSource(context: Context,
                 isFavorite = isFavorite,
                 id = id
         )
+    }
+
+    /**
+     * This method iterates over the cursor, creates a List<T> and puts it into Single<Translation>.
+     * Inline function "with" is responsible for always closing the cursor.
+     * In case of exception it will put it into Single<Translation> and close the cursor anyway.
+     */
+    private fun <T> Cursor.createListWrappedIntoSingleFromCursor(mapper: (Cursor) -> T): Single<List<T>> {
+        return Single.create<List<T>> { e ->
+            try {
+                this.use {
+                    val list = (1..this.count).map {
+                        this.moveToNext()
+                        mapper(this)
+                    }
+                    e.onSuccess(list)
+                }
+            } catch (exc: RuntimeException) {
+                e.onError(exc)
+            }
+        }
+
     }
 }

@@ -25,6 +25,7 @@ class LangsTableTest : BaseLocalDataSourceTest() {
 
         testObserver.assertValues(langList)
         testObserver.assertComplete()
+        testObserver.assertNoErrors()
     }
 
 }

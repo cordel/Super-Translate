@@ -1,6 +1,6 @@
 package live.senya.supertranslate
 
-import io.reactivex.Observable
+import io.reactivex.Maybe
 import io.reactivex.observers.TestObserver
 import live.senya.supertranslate.data.Lang
 import live.senya.supertranslate.data.TextToTranslate
@@ -15,28 +15,29 @@ class RepositoryTest {
 
     val lang = Lang("code", "name", "en")
     val textToTranslate = TextToTranslate(lang, lang, "original text")
-    val localTranslationResponse = Translation(textToTranslate, "translated text")
-    val remoteTranslationResponse = Translation(textToTranslate, "translated text1")
+    val localTranslationResponse = Translation(textToTranslate, "local_ds_translation")
+    val remoteTranslationResponse = Translation(textToTranslate, "remote_ds_translation")
 
     @Test
-    fun repoQueriesRemoteDataSourceTest() {
+    fun repoQueriesRemoteDsIfLocalDsReturnsNoResult() {
         val remoteDataSource = mock(RemoteDataSource::class.java)
         `when`(remoteDataSource.getTranslation(textToTranslate))
-                .thenReturn(Observable.just(remoteTranslationResponse))
+                .thenReturn(Maybe.just(remoteTranslationResponse))
 
         val localDataSource = mock(LocalDataSource::class.java)
         `when`(localDataSource.getTranslation(textToTranslate))
-                .thenReturn(Observable.empty())
+                .thenReturn(Maybe.empty())
 
         val repository = Repository(localDataSource, remoteDataSource)
 
-        val test = TestObserver<Translation>()
+        val testObserver = TestObserver<Translation>()
 
-        repository.getTranslation(textToTranslate).subscribe(test)
+        repository.getTranslation(textToTranslate).subscribe(testObserver)
 
-        test.assertValue(remoteTranslationResponse)
-        test.assertValueCount(1)
-        test.assertComplete()
+        testObserver.assertValue(remoteTranslationResponse)
+        testObserver.assertValueCount(1)
+        testObserver.assertComplete()
+        testObserver.assertNoErrors()
 
         verify(localDataSource, times(1)).saveTranslation(remoteTranslationResponse)
 
@@ -47,54 +48,29 @@ class RepositoryTest {
         val remoteDataSource = mock(RemoteDataSource::class.java)
         `when`(remoteDataSource.getTranslation(textToTranslate))
                 .thenReturn(
-                        Observable.create<Translation> {
-                            kotlin.run {
-                                println(123)
-                                it.onNext(kotlin.run {
-                                    throw Exception("remoteSourceWasCalled!")
-                                })
-                                it.onComplete()
-                            }
+                        Maybe.create<Translation> {
+                            it.onError(
+                                throw AssertionError("remoteSourceWasCalled!")
+                            )
                         }
                 )
 
         val localDataSource = mock(LocalDataSource::class.java)
         `when`(localDataSource.getTranslation(textToTranslate))
-                .thenReturn(Observable.just(localTranslationResponse))
+                .thenReturn(Maybe.just(localTranslationResponse))
 
         val repository = Repository(localDataSource, remoteDataSource)
 
-        val test = TestObserver<Translation>()
+        val testObserver = TestObserver<Translation>()
 
-        repository.getTranslation(textToTranslate).subscribe(test)
+        repository.getTranslation(textToTranslate).subscribe(testObserver)
 
-        test.assertValue(localTranslationResponse)
-        test.assertValueCount(1)
-        test.assertComplete()
+        testObserver.assertValue(localTranslationResponse)
+        testObserver.assertValueCount(1)
+        testObserver.assertComplete()
+        testObserver.assertNoErrors()
 
         verify(localDataSource, never()).saveTranslation(remoteTranslationResponse)
     }
 
-    @Test
-    fun repoSavesTranslationsFromRemoteSource() {
-        val remoteDataSource = mock(RemoteDataSource::class.java)
-        `when`(remoteDataSource.getTranslation(textToTranslate))
-                .thenReturn(Observable.just(remoteTranslationResponse))
-
-        val localDataSource = mock(LocalDataSource::class.java)
-        `when`(localDataSource.getTranslation(textToTranslate))
-                .thenReturn(Observable.empty())
-
-        val repository = Repository(localDataSource, remoteDataSource)
-
-        val test = TestObserver<Translation>()
-
-        repository.getTranslation(textToTranslate).subscribe(test)
-
-        test.assertValue(remoteTranslationResponse)
-        test.assertValueCount(1)
-        test.assertComplete()
-
-        verify(localDataSource, times(1)).saveTranslation(remoteTranslationResponse)
-    }
 }

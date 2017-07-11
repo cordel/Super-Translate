@@ -1,6 +1,7 @@
 package live.senya.supertranslate.data.source
 
 import io.reactivex.Observable
+import io.reactivex.Single
 import live.senya.supertranslate.data.Lang
 import live.senya.supertranslate.data.TextToTranslate
 import live.senya.supertranslate.data.Translation
@@ -10,22 +11,25 @@ import live.senya.supertranslate.data.source.remote.RemoteDataSource
 class Repository(val localDataSource: LocalDataSource,
                  val remoteDataSource: RemoteDataSource) {
 
-    fun getLangs(): Observable<List<Lang>> = localDataSource.getLangs()
+    fun getLangs(): Single<List<Lang>> = localDataSource.getLangs()
 
-    fun getTranslation(textToTranslate: TextToTranslate): Observable<Translation> {
+    /**
+     * This method tries to receive a valid translation from localDataSource.
+     * In case it receives nothing it queries remoteDataSource and then saves the translation
+     * with localDataSource
+     */
+    fun getTranslation(textToTranslate: TextToTranslate): Single<Translation> {
         return localDataSource.getTranslation(textToTranslate)
                 .switchIfEmpty(
                         remoteDataSource.getTranslation(textToTranslate)
-                                .map {
-                                    localDataSource.saveTranslation(it)
-                                    return@map it
-                                }
+                                .doAfterSuccess { localDataSource.saveTranslation(it) }
                 )
+                .toSingle()
     }
 
     fun putTranslationOnTopOfHistory(translation: Translation) = localDataSource.putTranslationOnTopOfHistory(translation)
 
-    fun getHistory(): Observable<MutableList<Translation>> = localDataSource.getHistory()
+    fun getHistory(): Single<List<Translation>> = localDataSource.getHistory()
 
     fun getHistoryUpdates(): Observable<Translation> = localDataSource.getHistoryUpdates()
 

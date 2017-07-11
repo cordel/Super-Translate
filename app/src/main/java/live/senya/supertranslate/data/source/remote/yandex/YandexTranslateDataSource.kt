@@ -1,7 +1,7 @@
 package live.senya.supertranslate.data.source.remote.yandex
 
 import android.content.Context
-import io.reactivex.Observable
+import io.reactivex.Maybe
 import live.senya.supertranslate.R
 import live.senya.supertranslate.data.TextToTranslate
 import live.senya.supertranslate.data.Translation
@@ -30,7 +30,7 @@ class YandexTranslateDataSource @Inject constructor(
                     .build()
                     .create(YandexTranslateService::class.java)
 
-    override fun getTranslation(textToTranslate: TextToTranslate): Observable<Translation> =
+    override fun getTranslation(textToTranslate: TextToTranslate): Maybe<Translation> =
             yandexTranslateService.translate(
                     key = apiKey,
                     lang = getTranslationDirection(textToTranslate),
