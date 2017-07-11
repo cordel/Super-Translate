@@ -14,7 +14,13 @@ class Repository(val localDataSource: LocalDataSource,
 
     fun getTranslation(textToTranslate: TextToTranslate): Observable<Translation> {
         return localDataSource.getTranslation(textToTranslate)
-                .switchIfEmpty(remoteDataSource.getTranslation(textToTranslate))
+                .switchIfEmpty(
+                        remoteDataSource.getTranslation(textToTranslate)
+                                .map {
+                                    localDataSource.saveTranslation(it)
+                                    return@map it
+                                }
+                )
     }
 
     fun putTranslationOnTopOfHistory(translation: Translation) = localDataSource.putTranslationOnTopOfHistory(translation)
@@ -22,9 +28,5 @@ class Repository(val localDataSource: LocalDataSource,
     fun getHistory(): Observable<MutableList<Translation>> = localDataSource.getHistory()
 
     fun getHistoryUpdates(): Observable<Translation> = localDataSource.getHistoryUpdates()
-
-    private fun saveTranslation(translation: Translation) {
-
-    }
 
 }
