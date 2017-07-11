@@ -39,5 +39,7 @@ allprojects {
         rxAndroidVersion= "2.0.1"
         retrofitVersion = "2.3.0"
         sqlBriteVersion = "2.0.0"
+        mockitoVersion = "2.8.47"
+        junitVersion = "4.12"
     }
 }
