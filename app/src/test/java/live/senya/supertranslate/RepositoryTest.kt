@@ -58,5 +58,7 @@ class RepositoryTest {
         test.assertValue(translation)
         test.assertValueCount(1)
         test.assertComplete()
+
+        Mockito.verifyZeroInteractions(remoteDataSource)
     }
 }
