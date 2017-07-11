@@ -6,7 +6,7 @@ import live.senya.supertranslate.data.Lang
 import live.senya.supertranslate.data.TextToTranslate
 import live.senya.supertranslate.data.Translation
 import live.senya.supertranslate.data.source.Repository
-import live.senya.supertranslate.data.source.local.BaseLocalDataSource
+import live.senya.supertranslate.data.source.local.sqlite.SqliteLocalDataSource
 import live.senya.supertranslate.data.source.remote.RemoteDataSource
 import org.junit.Test
 import org.mockito.Mockito
@@ -24,7 +24,7 @@ class RepositoryTest {
         Mockito.`when`(remoteDataSource.getTranslation(textToTranslate))
                 .thenReturn(Observable.just(translation1))
 
-        val localDataSource = Mockito.mock(BaseLocalDataSource::class.java)
+        val localDataSource = Mockito.mock(SqliteLocalDataSource::class.java)
         Mockito.`when`(localDataSource.getTranslation(textToTranslate))
                 .thenReturn(Observable.empty())
 
@@ -45,7 +45,7 @@ class RepositoryTest {
         Mockito.`when`(remoteDataSource.getTranslation(textToTranslate))
                 .thenReturn(Observable.just(translation1))
 
-        val localDataSource = Mockito.mock(BaseLocalDataSource::class.java)
+        val localDataSource = Mockito.mock(SqliteLocalDataSource::class.java)
         Mockito.`when`(localDataSource.getTranslation(textToTranslate))
                 .thenReturn(Observable.just(translation))
 

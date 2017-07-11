@@ -1,4 +1,4 @@
-package live.senya.supertranslate.data.source.local
+package live.senya.supertranslate.data.source.local.sqlite
 
 // Visible for testing
 abstract class TranslationsPersistenceContract private constructor() {

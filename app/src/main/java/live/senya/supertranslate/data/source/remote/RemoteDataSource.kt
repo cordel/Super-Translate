@@ -5,5 +5,7 @@ import live.senya.supertranslate.data.TextToTranslate
 import live.senya.supertranslate.data.Translation
 
 interface RemoteDataSource {
+
     fun getTranslation(textToTranslate: TextToTranslate): Observable<Translation>
+
 }

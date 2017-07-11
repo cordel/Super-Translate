@@ -1,10 +1,10 @@
-package live.senya.supertranslate.data.source.local
+package live.senya.supertranslate.data.source.local.sqlite
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import live.senya.supertranslate.data.source.local.TranslationsPersistenceContract.DbInfo.DB_NAME
-import live.senya.supertranslate.data.source.local.TranslationsPersistenceContract.DbInfo.DB_VERSION
+import live.senya.supertranslate.data.source.local.sqlite.TranslationsPersistenceContract.DbInfo.DB_NAME
+import live.senya.supertranslate.data.source.local.sqlite.TranslationsPersistenceContract.DbInfo.DB_VERSION
 
 class DbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
