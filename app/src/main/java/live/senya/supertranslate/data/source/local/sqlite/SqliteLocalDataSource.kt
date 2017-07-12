@@ -3,7 +3,9 @@ package live.senya.supertranslate.data.source.local.sqlite
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
+import com.squareup.sqlbrite2.BriteDatabase
 import com.squareup.sqlbrite2.SqlBrite
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -15,8 +17,8 @@ import live.senya.supertranslate.data.source.local.LocalDataSource
 import live.senya.supertranslate.schedulers.BaseSchedulerProvider
 
 class SqliteLocalDataSource(context: Context,
-                            schedulerProvider: BaseSchedulerProvider,
-                            val currentLocale: String) : LocalDataSource {
+                            private val schedulerProvider: BaseSchedulerProvider,
+                            private val currentLocale: String) : LocalDataSource {
 
     private val selectSourceLangSql = """
             |(
@@ -81,7 +83,7 @@ class SqliteLocalDataSource(context: Context,
             |${LangTable.COLUMN_NAME_LOCALE} = ?
         """.trimMargin()
 
-        return dbHelper.query(sql, currentLocale).createListWrappedIntoSingleFromCursor { mapLang(it) }
+        return dbHelper.queryDb({ mapLang(it) }, sql, currentLocale)
     }
 
     override fun saveTranslation(translation: Translation) {
@@ -131,7 +133,7 @@ class SqliteLocalDataSource(context: Context,
                 textToTranslate.originalText
         )
 
-        return Maybe.create { e ->
+        return Maybe.create<Translation> { e ->
             try {
                 dbHelper.query(sql, *selectionArgs).use {
                     if (it.count > 0) {
@@ -144,7 +146,7 @@ class SqliteLocalDataSource(context: Context,
             } catch (exc: RuntimeException) {
                 e.onError(exc)
             }
-        }
+        }.subscribeOn(schedulerProvider.io())
 
     }
 
@@ -198,7 +200,7 @@ class SqliteLocalDataSource(context: Context,
             |${TranslationTable.COLUMN_NAME_HISTORY_POSITION}
         """.trimMargin()
 
-        return dbHelper.query(sql).createListWrappedIntoSingleFromCursor { mapTranslation(it) }
+        return dbHelper.queryDb({ mapTranslation(it) }, sql)
     }
 
     override fun getHistoryUpdates(): Observable<Translation> {
@@ -262,25 +264,21 @@ class SqliteLocalDataSource(context: Context,
         )
     }
 
-    /**
-     * This method iterates over the cursor, creates a List<T> and puts it into Single<Translation>.
-     * Inline function "with" is responsible for always closing the cursor.
-     * In case of exception it will put it into Single<Translation> and close the cursor anyway.
-     */
-    private fun <T> Cursor.createListWrappedIntoSingleFromCursor(mapper: (Cursor) -> T): Single<List<T>> {
+    private fun <T> BriteDatabase.queryDb(
+            mapper: (Cursor) -> T, sql: String, vararg args: String
+    ): Single<List<T>> {
         return Single.create<List<T>> { e ->
             try {
-                this.use {
-                    val list = (1..this.count).map {
-                        this.moveToNext()
-                        mapper(this)
+                readableDatabase.rawQuery(sql, args).use { cursor ->
+                    val list = (1..cursor.count).map {
+                        cursor.moveToNext()
+                        mapper(cursor)
                     }
                     e.onSuccess(list)
                 }
-            } catch (exc: RuntimeException) {
+            } catch (exc: SQLException) {
                 e.onError(exc)
             }
-        }
-
+        }.subscribeOn(schedulerProvider.io())
     }
 }
