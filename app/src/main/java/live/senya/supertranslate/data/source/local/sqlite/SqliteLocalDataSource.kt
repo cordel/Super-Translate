@@ -264,7 +264,7 @@ class SqliteLocalDataSource(context: Context,
 
     /**
      * This method iterates over the cursor, creates a List<T> and puts it into Single<Translation>.
-     * Inline function "with" is responsible for always closing the cursor.
+     * Inline function "use" is responsible for always closing the cursor.
      * In case of exception it will put it into Single<Translation> and close the cursor anyway.
      */
     private fun <T> Cursor.createListWrappedIntoSingleFromCursor(mapper: (Cursor) -> T): Single<List<T>> {
