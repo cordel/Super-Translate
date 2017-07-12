@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Super Translate</string>
+    <string name="title_translate">Translate</string>
+    <string name="title_history">History</string>
+    <string name="title_favorites">Favorites</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_translate_fragment">Hello translate fragment</string>
+    <string name="hello_history_fragment">Hello history fragment</string>
 </resources>
