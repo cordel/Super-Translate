@@ -8,8 +8,8 @@ import live.senya.supertranslate.data.Translation
 import live.senya.supertranslate.data.source.local.LocalDataSource
 import live.senya.supertranslate.data.source.remote.RemoteDataSource
 
-class Repository(val localDataSource: LocalDataSource,
-                 val remoteDataSource: RemoteDataSource) {
+class Repository(private val localDataSource: LocalDataSource,
+                 private val remoteDataSource: RemoteDataSource) {
 
     fun getLangs(): Single<List<Lang>> = localDataSource.getLangs()
 
