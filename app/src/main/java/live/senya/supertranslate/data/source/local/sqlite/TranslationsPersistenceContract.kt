@@ -8,6 +8,10 @@ abstract class TranslationsPersistenceContract private constructor() {
     }
 }
 
+/**
+ * Lang table.
+ * Corresponding entity - Lang.
+ */
 object LangTable {
     const val TABLE_NAME = "lang"
     const val COLUMN_NAME_CODE = "lang_code"
@@ -15,6 +19,13 @@ object LangTable {
     const val COLUMN_NAME_LOCALE = "lang_name_locale"
 }
 
+/**
+ * Translations table.
+ * Corresponding entity - Translation.
+ * Columns HISTORY_POSITION and FAVORITE_POSITION are responsible for ordering results in historical order.
+ * Less the number - older the entry and vice versa.
+ * These columns can hold NULL value which means that entry was never shown to user/is not favorite.
+ */
 object TranslationTable {
     const val TABLE_NAME = "translation"
     const val COLUMN_NAME_ID = "id"
@@ -27,6 +38,9 @@ object TranslationTable {
     const val COLUMN_NAME_FAVORITE_POSITION = "favorite_position"
 }
 
+/**
+ * Utility alias names used for convenient query building.
+ */
 object UtilNames {
     const val TARGET = "target"
     const val SOURCE = "source"
