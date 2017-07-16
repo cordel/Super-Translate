@@ -22,16 +22,16 @@ class YandexTranslateDataSource @Inject constructor(
 
     private val apiKey = context.getString(R.string.yandex_translate_api_key)
 
-    private val yandexTranslateService: YandexTranslateService =
+    private val yandexTranslateApi: YandexTranslateApi =
             Retrofit.Builder()
                     .addConverterFactory(MoshiConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .baseUrl(SERVICE_URL)
                     .build()
-                    .create(YandexTranslateService::class.java)
+                    .create(YandexTranslateApi::class.java)
 
     override fun getTranslation(textToTranslate: TextToTranslate): Maybe<Translation> =
-            yandexTranslateService.translate(
+            yandexTranslateApi.translate(
                     key = apiKey,
                     lang = getTranslationDirection(textToTranslate),
                     text = textToTranslate.originalText
