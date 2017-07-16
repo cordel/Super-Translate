@@ -36,9 +36,7 @@ class YandexTranslateDataSource @Inject constructor(
                     lang = getTranslationDirection(textToTranslate),
                     text = textToTranslate.originalText
             )
-                    .subscribeOn(schedulerProvider.io())
                     .map { Translation(textToTranslate, it.text[0]) }
-                    .observeOn(schedulerProvider.ui())
 
     private fun getTranslationDirection(textToTranslate: TextToTranslate): String =
             "${textToTranslate.sourceLang.code}-${textToTranslate.targetLang.code}"

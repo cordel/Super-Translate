@@ -8,6 +8,7 @@ import live.senya.supertranslate.data.Translation
 import live.senya.supertranslate.data.source.Repository
 import live.senya.supertranslate.data.source.local.LocalDataSource
 import live.senya.supertranslate.data.source.remote.RemoteDataSource
+import live.senya.supertranslate.schedulers.ImmediateSchedulerProvider
 import org.junit.Test
 import org.mockito.Mockito.*
 
@@ -28,7 +29,7 @@ class RepositoryTest {
         `when`(localDataSource.getTranslation(textToTranslate))
                 .thenReturn(Maybe.empty())
 
-        val repository = Repository(localDataSource, remoteDataSource)
+        val repository = Repository(localDataSource, remoteDataSource, ImmediateSchedulerProvider())
 
         val testObserver = TestObserver<Translation>()
 
@@ -59,7 +60,7 @@ class RepositoryTest {
         `when`(localDataSource.getTranslation(textToTranslate))
                 .thenReturn(Maybe.just(localTranslationResponse))
 
-        val repository = Repository(localDataSource, remoteDataSource)
+        val repository = Repository(localDataSource, remoteDataSource, ImmediateSchedulerProvider())
 
         val testObserver = TestObserver<Translation>()
 

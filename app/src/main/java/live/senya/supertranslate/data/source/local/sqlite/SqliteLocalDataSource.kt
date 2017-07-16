@@ -3,7 +3,9 @@ package live.senya.supertranslate.data.source.local.sqlite
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
+import com.squareup.sqlbrite2.BriteDatabase
 import com.squareup.sqlbrite2.SqlBrite
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -15,7 +17,7 @@ import live.senya.supertranslate.data.source.local.LocalDataSource
 import live.senya.supertranslate.schedulers.BaseSchedulerProvider
 
 class SqliteLocalDataSource(context: Context,
-                            schedulerProvider: BaseSchedulerProvider,
+                            private val schedulerProvider: BaseSchedulerProvider,
                             private val currentLocale: String) : LocalDataSource {
 
     private val selectSourceLangSql = """
@@ -62,7 +64,12 @@ class SqliteLocalDataSource(context: Context,
             put(LangTable.COLUMN_NAME_LOCALE, lang.locale)
         }
 
-        dbHelper.insert(LangTable.TABLE_NAME, values, SQLiteDatabase.CONFLICT_REPLACE)
+        dbHelper.writableDatabase.insertWithOnConflict(
+                LangTable.TABLE_NAME,
+                null,
+                values,
+                SQLiteDatabase.CONFLICT_REPLACE
+        )
     }
 
     override fun getLangs(): Single<List<Lang>> {
@@ -81,7 +88,7 @@ class SqliteLocalDataSource(context: Context,
             |${LangTable.COLUMN_NAME_LOCALE} = ?
         """.trimMargin()
 
-        return dbHelper.query(sql, currentLocale).createListWrappedIntoSingleFromCursor { mapLang(it) }
+        return dbHelper.queryDb({ mapLang(it) }, sql, currentLocale)
     }
 
     override fun saveTranslation(translation: Translation) {
@@ -96,7 +103,12 @@ class SqliteLocalDataSource(context: Context,
             put(TranslationTable.COLUMN_NAME_ID, translation.id)
         }
 
-        dbHelper.insert(TranslationTable.TABLE_NAME, values, SQLiteDatabase.CONFLICT_REPLACE)
+        dbHelper.writableDatabase.insertWithOnConflict(
+                TranslationTable.TABLE_NAME,
+                null,
+                values,
+                SQLiteDatabase.CONFLICT_REPLACE
+        )
     }
 
     override fun getTranslation(textToTranslate: TextToTranslate): Maybe<Translation> {
@@ -131,9 +143,9 @@ class SqliteLocalDataSource(context: Context,
                 textToTranslate.originalText
         )
 
-        return Maybe.create { e ->
+        return Maybe.create<Translation> { e ->
             try {
-                dbHelper.query(sql, *selectionArgs).use {
+                dbHelper.readableDatabase.rawQuery(sql, selectionArgs).use {
                     if (it.count > 0) {
                         it.moveToFirst()
                         e.onSuccess(mapTranslation(it))
@@ -172,7 +184,7 @@ class SqliteLocalDataSource(context: Context,
             |'${translation.id}'
             """.trimMargin()
 
-        dbHelper.execute(sql)
+        dbHelper.executeAndTrigger(TranslationTable.TABLE_NAME, sql)
     }
 
     override fun getHistory(): Single<List<Translation>> {
@@ -198,7 +210,7 @@ class SqliteLocalDataSource(context: Context,
             |${TranslationTable.COLUMN_NAME_HISTORY_POSITION}
         """.trimMargin()
 
-        return dbHelper.query(sql).createListWrappedIntoSingleFromCursor { mapTranslation(it) }
+        return dbHelper.queryDb({ mapTranslation(it) }, sql)
     }
 
     override fun getHistoryUpdates(): Observable<Translation> {
@@ -263,24 +275,24 @@ class SqliteLocalDataSource(context: Context,
     }
 
     /**
-     * This method iterates over the cursor, creates a List<T> and puts it into Single<Translation>.
-     * Inline function "use" is responsible for always closing the cursor.
-     * In case of exception it will put it into Single<Translation> and close the cursor anyway.
+     * Executes a received sql query and returns a list of items wrapped into Single.
      */
-    private fun <T> Cursor.createListWrappedIntoSingleFromCursor(mapper: (Cursor) -> T): Single<List<T>> {
+    private fun <T> BriteDatabase.queryDb(
+            mapper: (Cursor) -> T,
+            sql: String,
+            vararg args: String): Single<List<T>> {
         return Single.create<List<T>> { e ->
             try {
-                this.use {
-                    val list = (1..this.count).map {
-                        this.moveToNext()
-                        mapper(this)
+                readableDatabase.rawQuery(sql, args).use { cursor ->
+                    val list = (1..cursor.count).map {
+                        cursor.moveToNext()
+                        mapper(cursor)
                     }
                     e.onSuccess(list)
                 }
-            } catch (exc: RuntimeException) {
+            } catch (exc: SQLException) {
                 e.onError(exc)
             }
         }
-
     }
 }
