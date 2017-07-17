@@ -1,11 +1,11 @@
 package live.senya.supertranslate.main
 
 import dagger.Component
-import live.senya.supertranslate.FragmentScoped
+import live.senya.supertranslate.ActivityScope
 import live.senya.supertranslate.data.source.RepositoryComponent
 import live.senya.supertranslate.translate.TranslatePresenterModule
 
-@FragmentScoped
+@ActivityScope
 @Component(
         dependencies = arrayOf(RepositoryComponent::class),
         modules = arrayOf(TranslatePresenterModule::class)

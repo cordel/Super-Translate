@@ -19,11 +19,10 @@ class MainActivity : AppCompatActivity() {
         const val HISTORY_FRAGMENT_TAG = "history"
     }
 
-    lateinit var translateFragment: TranslateFragment
-    lateinit var historyFragment: HistoryFragment
-
     @Inject
     lateinit var translatePresenter: TranslatePresenter
+    lateinit var translateFragment: TranslateFragment
+    lateinit var historyFragment: HistoryFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
