@@ -8,10 +8,11 @@ import live.senya.supertranslate.data.Translation
 import live.senya.supertranslate.data.source.local.LocalDataSource
 import live.senya.supertranslate.data.source.remote.RemoteDataSource
 import live.senya.supertranslate.schedulers.BaseSchedulerProvider
+import javax.inject.Inject
 
-class Repository(val localDataSource: LocalDataSource,
-                 val remoteDataSource: RemoteDataSource,
-                 val schedulerProvider: BaseSchedulerProvider) {
+class Repository @Inject constructor(val localDataSource: LocalDataSource,
+                                     val remoteDataSource: RemoteDataSource,
+                                     val schedulerProvider: BaseSchedulerProvider) {
 
     fun getLangs(): Single<List<Lang>> = localDataSource
             .getLangs()
@@ -21,7 +22,7 @@ class Repository(val localDataSource: LocalDataSource,
     /**
      * This method tries to receive a valid translation from localDataSource.
      * In case it receives nothing it queries remoteDataSource and then saves the translation
-     * with localDataSource
+     * with localDataSource.
      */
     fun getTranslation(textToTranslate: TextToTranslate): Single<Translation> {
         return localDataSource.getTranslation(textToTranslate)

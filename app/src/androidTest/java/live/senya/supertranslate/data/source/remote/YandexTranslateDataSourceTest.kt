@@ -5,7 +5,6 @@ import android.support.test.runner.AndroidJUnit4
 import live.senya.supertranslate.data.Lang
 import live.senya.supertranslate.data.TextToTranslate
 import live.senya.supertranslate.data.source.remote.yandex.YandexTranslateDataSource
-import live.senya.supertranslate.schedulers.ImmediateSchedulerProvider
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,8 +12,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class) class YandexTranslateDataSourceTest {
 
     val yandexRemoteDataSource = YandexTranslateDataSource(
-            InstrumentationRegistry.getTargetContext(),
-            ImmediateSchedulerProvider()
+            InstrumentationRegistry.getTargetContext()
     )
     val textToTranslate = TextToTranslate(
             sourceLang = Lang("en", "ENGLISH", "en"),

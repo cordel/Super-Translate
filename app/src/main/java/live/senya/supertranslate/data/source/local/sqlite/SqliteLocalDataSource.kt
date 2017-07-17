@@ -16,9 +16,11 @@ import live.senya.supertranslate.data.Translation
 import live.senya.supertranslate.data.source.local.LocalDataSource
 import live.senya.supertranslate.schedulers.BaseSchedulerProvider
 
-class SqliteLocalDataSource(context: Context,
-                            private val schedulerProvider: BaseSchedulerProvider,
-                            private val currentLocale: String) : LocalDataSource {
+class SqliteLocalDataSource(
+        context: Context,
+        schedulerProvider: BaseSchedulerProvider,
+        private val currentLocale: String = context.resources.configuration.locale.language
+) : LocalDataSource {
 
     private val selectSourceLangSql = """
             |(

@@ -4,9 +4,13 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import live.senya.supertranslate.App
 import live.senya.supertranslate.R
 import live.senya.supertranslate.history.HistoryFragment
 import live.senya.supertranslate.translate.TranslateFragment
+import live.senya.supertranslate.translate.TranslatePresenter
+import live.senya.supertranslate.translate.TranslatePresenterModule
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +21,9 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var translateFragment: TranslateFragment
     lateinit var historyFragment: HistoryFragment
+
+    @Inject
+    lateinit var translatePresenter: TranslatePresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +49,13 @@ class MainActivity : AppCompatActivity() {
             historyFragment = supportFragmentManager
                     .findFragmentByTag(HISTORY_FRAGMENT_TAG) as HistoryFragment
         }
+
+        DaggerMainActivityComponent.builder()
+                .repositoryComponent((application as App).repositoryComponent)
+                .translatePresenterModule(TranslatePresenterModule(translateFragment))
+                .build()
+                .inject(this)
+
     }
 
     private fun navigationItemSelectListener(): (MenuItem) -> Boolean {

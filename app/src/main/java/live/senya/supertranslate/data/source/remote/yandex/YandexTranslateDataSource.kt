@@ -6,15 +6,11 @@ import live.senya.supertranslate.R
 import live.senya.supertranslate.data.TextToTranslate
 import live.senya.supertranslate.data.Translation
 import live.senya.supertranslate.data.source.remote.RemoteDataSource
-import live.senya.supertranslate.schedulers.BaseSchedulerProvider
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
-import javax.inject.Inject
 
-class YandexTranslateDataSource @Inject constructor(
-        context: Context, private val schedulerProvider: BaseSchedulerProvider
-) : RemoteDataSource {
+class YandexTranslateDataSource(context: Context) : RemoteDataSource {
 
     companion object {
         private const val SERVICE_URL = "https://translate.yandex.net/api/v1.5/"
