@@ -3,6 +3,7 @@ package live.senya.supertranslate.main
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MenuItem
 import live.senya.supertranslate.App
 import live.senya.supertranslate.R
@@ -17,6 +18,7 @@ class MainActivity : AppCompatActivity() {
   companion object {
     const val TRANSLATE_FRAGMENT_TAG = "translate"
     const val HISTORY_FRAGMENT_TAG = "history"
+    val TAG = MainActivity::class.java.simpleName!!
   }
 
   @Inject
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
   lateinit var historyFragment: HistoryFragment
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    Log.w(TAG, "onCreate()")
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
