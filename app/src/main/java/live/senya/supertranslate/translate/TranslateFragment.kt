@@ -31,7 +31,7 @@ class TranslateFragment : Fragment(), TranslateContract.View {
   }
 
   override fun showTranslation(translation: Translation) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
   }
 
   override fun setPresenter(presenter: TranslateContract.Presenter) {

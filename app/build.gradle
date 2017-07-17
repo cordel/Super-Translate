@@ -13,6 +13,7 @@ android {
         versionName parent.ext.androidVersionName
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -46,6 +47,8 @@ dependencies {
     // Android support
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile "com.android.support:design:$supportVersion"
+    compile "com.android.support:cardview-v7:$supportVersion"
+
 
     // Dagger
     compile "com.google.dagger:dagger:$daggerVersion"

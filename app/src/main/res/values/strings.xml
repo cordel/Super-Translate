@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">Super Translate</string>
+    <string name="title_activity_main">MainActivity</string>
     <string name="title_translate">Translate</string>
     <string name="title_history">History</string>
     <string name="title_favorites">Favorites</string>
+    <string name="hint_edit_text">Tap to enter text</string>
+    <string name="title_langselector_translate_to">Translate to</string>
+    <string name="title_langselector_translate_from">Translate from</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_translate_fragment">Hello translate fragment</string>
     <string name="hello_history_fragment">Hello history fragment</string>
+
 </resources>
