@@ -9,18 +9,18 @@ import live.senya.supertranslate.data.Translation
 
 interface LocalDataSource {
 
-    fun saveLang(lang: Lang)
+  fun saveLang(lang: Lang)
 
-    fun getLangs(): Single<List<Lang>>
+  fun getLangs(): Single<List<Lang>>
 
-    fun saveTranslation(translation: Translation)
+  fun saveTranslation(translation: Translation)
 
-    fun getTranslation(textToTranslate: TextToTranslate): Maybe<Translation>
+  fun getTranslation(textToTranslate: TextToTranslate): Maybe<Translation>
 
-    fun putTranslationOnTopOfHistory(translation: Translation)
+  fun putTranslationOnTopOfHistory(translation: Translation)
 
-    fun getHistory(): Single<List<Translation>>
+  fun getHistory(): Single<List<Translation>>
 
-    fun getHistoryUpdates(): Observable<Translation>
+  fun getHistoryUpdates(): Observable<Translation>
 
 }

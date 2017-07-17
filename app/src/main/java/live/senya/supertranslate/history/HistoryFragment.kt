@@ -11,15 +11,15 @@ import live.senya.supertranslate.R
 
 class HistoryFragment : Fragment() {
 
-    companion object {
-        fun newInstance(): HistoryFragment {
-            return HistoryFragment()
-        }
+  companion object {
+    fun newInstance(): HistoryFragment {
+      return HistoryFragment()
     }
+  }
 
-    override fun onCreateView(inflater: LayoutInflater?,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_history, container, false)
-    }
+  override fun onCreateView(inflater: LayoutInflater?,
+                            container: ViewGroup?,
+                            savedInstanceState: Bundle?): View? {
+    return inflater!!.inflate(R.layout.fragment_history, container, false)
+  }
 }

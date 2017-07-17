@@ -6,7 +6,7 @@ import dagger.Provides
 @Module
 class TranslatePresenterModule(private val view: TranslateContract.View) {
 
-    @Provides
-    fun provideView(): TranslateContract.View = view
+  @Provides
+  fun provideView(): TranslateContract.View = view
 
 }

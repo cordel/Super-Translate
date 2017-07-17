@@ -7,10 +7,10 @@ import retrofit2.http.POST
 
 interface YandexTranslateApi {
 
-    @FormUrlEncoded
-    @POST("tr.json/translate")
-    fun translate(@Field("key") key: String,
-                  @Field("text") text: String,
-                  @Field("lang") lang: String): Maybe<YandexTranslateResponse>
+  @FormUrlEncoded
+  @POST("tr.json/translate")
+  fun translate(@Field("key") key: String,
+                @Field("text") text: String,
+                @Field("lang") lang: String): Maybe<YandexTranslateResponse>
 
 }

@@ -7,11 +7,11 @@ import live.senya.supertranslate.translate.TranslatePresenterModule
 
 @ActivityScope
 @Component(
-        dependencies = arrayOf(RepositoryComponent::class),
-        modules = arrayOf(TranslatePresenterModule::class)
+    dependencies = arrayOf(RepositoryComponent::class),
+    modules = arrayOf(TranslatePresenterModule::class)
 )
 interface MainActivityComponent {
 
-    fun inject(mainActivity: MainActivity)
+  fun inject(mainActivity: MainActivity)
 
 }

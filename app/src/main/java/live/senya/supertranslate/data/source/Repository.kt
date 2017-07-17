@@ -14,34 +14,34 @@ class Repository @Inject constructor(val localDataSource: LocalDataSource,
                                      val remoteDataSource: RemoteDataSource,
                                      val schedulerProvider: BaseSchedulerProvider) {
 
-    fun getLangs(): Single<List<Lang>> = localDataSource
-            .getLangs()
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+  fun getLangs(): Single<List<Lang>> = localDataSource
+      .getLangs()
+      .subscribeOn(schedulerProvider.io())
+      .observeOn(schedulerProvider.ui())
 
-    /**
-     * This method tries to receive a valid translation from localDataSource.
-     * In case it receives nothing it queries remoteDataSource and then saves the translation
-     * with localDataSource.
-     */
-    fun getTranslation(textToTranslate: TextToTranslate): Single<Translation> {
-        return localDataSource.getTranslation(textToTranslate)
-                .switchIfEmpty(
-                        remoteDataSource.getTranslation(textToTranslate)
-                                .doAfterSuccess { localDataSource.saveTranslation(it) }
-                )
-                .toSingle()
-                .subscribeOn(schedulerProvider.io())
-                .observeOn(schedulerProvider.ui())
-    }
+  /**
+   * This method tries to receive a valid translation from localDataSource.
+   * In case it receives nothing it queries remoteDataSource and then saves the translation
+   * with localDataSource.
+   */
+  fun getTranslation(textToTranslate: TextToTranslate): Single<Translation> {
+    return localDataSource.getTranslation(textToTranslate)
+        .switchIfEmpty(
+            remoteDataSource.getTranslation(textToTranslate)
+                .doAfterSuccess { localDataSource.saveTranslation(it) }
+        )
+        .toSingle()
+        .subscribeOn(schedulerProvider.io())
+        .observeOn(schedulerProvider.ui())
+  }
 
-    fun putTranslationOnTopOfHistory(translation: Translation) = localDataSource.putTranslationOnTopOfHistory(translation)
+  fun putTranslationOnTopOfHistory(translation: Translation) = localDataSource.putTranslationOnTopOfHistory(translation)
 
-    fun getHistory(): Single<List<Translation>> = localDataSource
-            .getHistory()
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+  fun getHistory(): Single<List<Translation>> = localDataSource
+      .getHistory()
+      .subscribeOn(schedulerProvider.io())
+      .observeOn(schedulerProvider.ui())
 
-    fun getHistoryUpdates(): Observable<Translation> = localDataSource.getHistoryUpdates()
+  fun getHistoryUpdates(): Observable<Translation> = localDataSource.getHistoryUpdates()
 
 }

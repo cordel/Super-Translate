@@ -8,16 +8,16 @@ import live.senya.supertranslate.data.source.local.sqlite.TranslationsPersistenc
 
 class DbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
-    override fun onCreate(db: SQLiteDatabase?) {
-        with(db!!) {
-            execSQL(SQL_CREATE_LANG_TABLE)
-            execSQL(SQL_CREATE_TRANSLATION_TABLE)
-        }
+  override fun onCreate(db: SQLiteDatabase?) {
+    with(db!!) {
+      execSQL(SQL_CREATE_LANG_TABLE)
+      execSQL(SQL_CREATE_TRANSLATION_TABLE)
     }
+  }
 
-    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        //noop
-    }
+  override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+    //noop
+  }
 
 }
 

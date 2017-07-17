@@ -7,8 +7,8 @@ import javax.inject.Singleton
 @Module
 class SchedulerProviderModule {
 
-    @Singleton
-    @Provides
-    fun provideSchedulerProvider(): BaseSchedulerProvider = SchedulerProvider()
+  @Singleton
+  @Provides
+  fun provideSchedulerProvider(): BaseSchedulerProvider = SchedulerProvider()
 
 }

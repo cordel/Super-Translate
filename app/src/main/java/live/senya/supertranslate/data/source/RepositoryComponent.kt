@@ -7,12 +7,12 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = arrayOf(
-        RepositoryModule::class,
-        SchedulerProviderModule::class,
-        AppModule::class
+    RepositoryModule::class,
+    SchedulerProviderModule::class,
+    AppModule::class
 ))
 interface RepositoryComponent {
 
-    fun getRepository(): Repository
+  fun getRepository(): Repository
 
 }

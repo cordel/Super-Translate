@@ -12,26 +12,27 @@ import live.senya.supertranslate.data.Translation
 
 class TranslateFragment : Fragment(), TranslateContract.View {
 
-    lateinit var presenter1: TranslateContract.Presenter
+  lateinit var presenter1: TranslateContract.Presenter
 
-    companion object {
+  companion object {
 
-        fun newInstance(): TranslateFragment {
-            return TranslateFragment()
-        }
+    fun newInstance(): TranslateFragment {
+      return TranslateFragment()
     }
-    override fun onCreateView(inflater: LayoutInflater?,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_translate, container, false)
-    }
+  }
 
-    override fun showTranslation(translation: Translation) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+  override fun onCreateView(inflater: LayoutInflater?,
+                            container: ViewGroup?,
+                            savedInstanceState: Bundle?): View? {
+    return inflater!!.inflate(R.layout.fragment_translate, container, false)
+  }
 
-    override fun setPresenter(presenter: TranslateContract.Presenter) {
-        presenter1 = presenter
-    }
+  override fun showTranslation(translation: Translation) {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  }
+
+  override fun setPresenter(presenter: TranslateContract.Presenter) {
+    presenter1 = presenter
+  }
 
 }

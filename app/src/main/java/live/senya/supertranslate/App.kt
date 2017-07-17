@@ -6,14 +6,14 @@ import live.senya.supertranslate.data.source.RepositoryComponent
 
 class App : Application() {
 
-    lateinit var repositoryComponent: RepositoryComponent
+  lateinit var repositoryComponent: RepositoryComponent
 
-    override fun onCreate() {
-        super.onCreate()
+  override fun onCreate() {
+    super.onCreate()
 
-        repositoryComponent = DaggerRepositoryComponent.builder()
-                .appModule(AppModule(applicationContext))
-                .build()
-    }
+    repositoryComponent = DaggerRepositoryComponent.builder()
+        .appModule(AppModule(applicationContext))
+        .build()
+  }
 
 }

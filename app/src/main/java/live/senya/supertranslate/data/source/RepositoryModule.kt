@@ -13,17 +13,17 @@ import javax.inject.Singleton
 @Module
 class RepositoryModule {
 
-    @Singleton
-    @Provides
-    fun provideLocalDataSource(
-            context: Context,
-            schedulerProvider: BaseSchedulerProvider
-    ): LocalDataSource = SqliteLocalDataSource(context, schedulerProvider)
+  @Singleton
+  @Provides
+  fun provideLocalDataSource(
+      context: Context,
+      schedulerProvider: BaseSchedulerProvider
+  ): LocalDataSource = SqliteLocalDataSource(context, schedulerProvider)
 
-    @Singleton
-    @Provides
-    fun provideRemoteDataSource(
-            context: Context
-    ): RemoteDataSource = YandexTranslateDataSource(context)
+  @Singleton
+  @Provides
+  fun provideRemoteDataSource(
+      context: Context
+  ): RemoteDataSource = YandexTranslateDataSource(context)
 
 }

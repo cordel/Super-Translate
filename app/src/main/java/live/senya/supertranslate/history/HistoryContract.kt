@@ -5,11 +5,11 @@ import live.senya.supertranslate.BaseView
 
 interface HistoryContract {
 
-    interface View : BaseView<Presenter> {
+  interface View : BaseView<Presenter> {
 
-    }
+  }
 
-    interface Presenter : BasePresenter {
+  interface Presenter : BasePresenter {
 
-    }
+  }
 }

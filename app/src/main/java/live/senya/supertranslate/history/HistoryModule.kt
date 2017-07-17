@@ -4,6 +4,6 @@ import live.senya.supertranslate.translate.TranslateContract
 
 class HistoryModule(private val view: TranslateContract) {
 
-    fun provideView(): TranslateContract = view
+  fun provideView(): TranslateContract = view
 
 }
