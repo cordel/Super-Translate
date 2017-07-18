@@ -3,7 +3,7 @@ package live.senya.supertranslate.data.source.local.sqlite
 // Visible for testing
 abstract class TranslationsPersistenceContract private constructor() {
   companion object DbInfo {
-    const val DB_NAME = "Translations.db"
+    const val DB_NAME = "supertranslate.db"
     const val DB_VERSION = 1
   }
 }

@@ -48,7 +48,6 @@ class TranslateFragment : Fragment(), TranslateContract.View {
     textViewSourceLang.setOnClickListener { translationPresenter.openLangSelector(LangSelectorType.SOURCE) }
     textViewTargetLang.setOnClickListener { translationPresenter.openLangSelector(LangSelectorType.TARGET) }
 
-
     return root
   }
 

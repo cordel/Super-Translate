@@ -1,23 +1,22 @@
 package live.senya.supertranslate.data.source.local.sqlite
 
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
+import com.readystatesoftware.sqliteasset.SQLiteAssetHelper
 import live.senya.supertranslate.data.source.local.sqlite.TranslationsPersistenceContract.DbInfo.DB_NAME
 import live.senya.supertranslate.data.source.local.sqlite.TranslationsPersistenceContract.DbInfo.DB_VERSION
 
-class DbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
+class DbHelper(context: Context) : SQLiteAssetHelper(context, DB_NAME, null, DB_VERSION) {
 
-  override fun onCreate(db: SQLiteDatabase?) {
-    with(db!!) {
-      execSQL(SQL_CREATE_LANG_TABLE)
-      execSQL(SQL_CREATE_TRANSLATION_TABLE)
-    }
-  }
-
-  override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-    //noop
-  }
+//  override fun onCreate(db: SQLiteDatabase?) {
+//    with(db!!) {
+//      execSQL(SQL_CREATE_LANG_TABLE)
+//      execSQL(SQL_CREATE_TRANSLATION_TABLE)
+//    }
+//  }
+//
+//  override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+//    //noop
+//  }
 
 }
 
@@ -45,4 +44,3 @@ private val SQL_CREATE_TRANSLATION_TABLE = """
     |${TranslationTable.COLUMN_NAME_FAVORITE_POSITION} INTEGER
     |)
 """.trimMargin()
-
