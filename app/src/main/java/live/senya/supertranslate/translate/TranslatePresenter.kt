@@ -3,7 +3,10 @@ package live.senya.supertranslate.translate
 import android.app.Activity
 import android.content.Intent
 import android.util.Log
+import io.reactivex.disposables.CompositeDisposable
 import live.senya.supertranslate.data.Lang
+import live.senya.supertranslate.data.TextToTranslate
+import live.senya.supertranslate.data.Translation
 import live.senya.supertranslate.data.source.Repository
 import live.senya.supertranslate.langselector.LangSelectorActivity
 import live.senya.supertranslate.langselector.LangSelectorType
@@ -23,14 +26,28 @@ class TranslatePresenter @Inject constructor(
     view.setPresenter(this)
   }
 
-  lateinit var sourceLang: Lang
-  lateinit var targetLang: Lang
+  private val subscriptions = CompositeDisposable()
+  private lateinit var sourceLang: Lang
+  private lateinit var targetLang: Lang
+  private lateinit var notTranslatedText: String
 
-  override fun translate(text: String) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+  override fun unsubscribe() {
+    subscriptions.clear()
   }
 
-  override fun openLangSelector(langSelectorType: LangSelectorType) = view.showLangSelectorUi(langSelectorType)
+  override fun translate(text: String) {
+    val textToTranslate = TextToTranslate(sourceLang, targetLang, text)
+    subscriptions.add(
+        repository
+            .getTranslation(textToTranslate)
+            .subscribe { t: Translation -> view.showTranslation(t) }
+    )
+  }
+
+  override fun openLangSelector(langSelectorType: LangSelectorType) {
+    view.showLangSelectorUi(langSelectorType)
+  }
 
   override fun onLangSelectorResult(requestCode: Int, resultCode: Int, data: Intent?) {
     if (resultCode == Activity.RESULT_OK && data != null) {
@@ -47,6 +64,16 @@ class TranslatePresenter @Inject constructor(
         }
       }
     }
+  }
+
+  override fun swapLangs() {
+    val temp = sourceLang
+    sourceLang = targetLang
+    targetLang = temp
+  }
+
+  override fun moveTranslationOnTopOfHistory(translation: Translation) {
+    repository.putTranslationOnTopOfHistory(translation)
   }
 
 }
