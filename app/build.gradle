@@ -48,7 +48,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile "com.android.support:design:$supportVersion"
     compile "com.android.support:cardview-v7:$supportVersion"
-
+    compile "com.android.support:support-v4:$supportVersion"
 
     // Dagger
     compile "com.google.dagger:dagger:$daggerVersion"

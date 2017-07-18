@@ -16,9 +16,9 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
   companion object {
+    private val TAG = MainActivity::class.java.simpleName!!
     const val TRANSLATE_FRAGMENT_TAG = "translate"
     const val HISTORY_FRAGMENT_TAG = "history"
-    val TAG = MainActivity::class.java.simpleName!!
   }
 
   @Inject
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
   lateinit var historyFragment: HistoryFragment
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    Log.w(TAG, "onCreate()")
+    Log.i(TAG, "onCreate()")
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
