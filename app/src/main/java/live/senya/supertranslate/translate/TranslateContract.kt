@@ -19,6 +19,8 @@ interface TranslateContract {
     fun translate(text: String)
     fun openLangSelector(langSelectorType: LangSelectorType)
     fun onLangSelectorResult(requestCode: Int, resultCode: Int, data: Intent?)
+    fun swapLangs()
+    fun moveTranslationOnTopOfHistory(translation: Translation)
   }
 
 }

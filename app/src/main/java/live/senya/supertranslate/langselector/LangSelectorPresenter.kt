@@ -19,6 +19,10 @@ class LangSelectorPresenter @Inject constructor(
     view.setPresenter(this)
   }
 
+  override fun unsubscribe() {
+
+  }
+
   override fun onLangSelected(lang: Lang) = view.returnSelectedLang(lang)
 
   override fun loadLangs() {
