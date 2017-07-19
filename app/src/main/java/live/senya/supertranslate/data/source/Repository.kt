@@ -42,6 +42,6 @@ class Repository @Inject constructor(val localDataSource: LocalDataSource,
       .subscribeOn(schedulerProvider.io())
       .observeOn(schedulerProvider.ui())
 
-  fun getHistoryUpdates(): Observable<Translation> = localDataSource.getHistoryUpdates()
+  fun getHistoryUpdates(): Observable<Translation> = localDataSource.getHistoryUpdates().observeOn(schedulerProvider.ui())
 
 }

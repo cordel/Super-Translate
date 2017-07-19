@@ -63,4 +63,5 @@ class LangSelectorActivity : AppCompatActivity() {
     onBackPressed()
     return true
   }
+
 }

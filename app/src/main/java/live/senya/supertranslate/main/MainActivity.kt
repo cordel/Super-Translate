@@ -8,6 +8,8 @@ import android.view.MenuItem
 import live.senya.supertranslate.App
 import live.senya.supertranslate.R
 import live.senya.supertranslate.history.HistoryFragment
+import live.senya.supertranslate.history.HistoryPresenter
+import live.senya.supertranslate.history.HistoryPresenterModule
 import live.senya.supertranslate.translate.TranslateFragment
 import live.senya.supertranslate.translate.TranslatePresenter
 import live.senya.supertranslate.translate.TranslatePresenterModule
@@ -23,15 +25,20 @@ class MainActivity : AppCompatActivity() {
 
   @Inject
   lateinit var translatePresenter: TranslatePresenter
+  @Inject
+  lateinit var historyPresenter: HistoryPresenter
+
   lateinit var translateFragment: TranslateFragment
   lateinit var historyFragment: HistoryFragment
+
+  lateinit var bottomNavigationView: BottomNavigationView
 
   override fun onCreate(savedInstanceState: Bundle?) {
     Log.i(TAG, "onCreate()")
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
-    val bottomNavigationView = findViewById(R.id.navigation) as BottomNavigationView
+    bottomNavigationView = findViewById(R.id.navigation) as BottomNavigationView
     bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectListener())
 
     if (savedInstanceState == null) {
@@ -55,9 +62,18 @@ class MainActivity : AppCompatActivity() {
     DaggerMainActivityComponent.builder()
         .repositoryComponent((application as App).repositoryComponent)
         .translatePresenterModule(TranslatePresenterModule(translateFragment))
+        .historyPresenterModule(HistoryPresenterModule(historyFragment))
         .build()
         .inject(this)
 
+  }
+
+  fun switchFragmentToTranslationView() {
+    supportFragmentManager.beginTransaction()
+        .show(translateFragment)
+        .hide(historyFragment)
+        .commit()
+    bottomNavigationView.selectedItemId = R.id.navigation_translate
   }
 
   private fun navigationItemSelectListener(): (MenuItem) -> Boolean {
@@ -81,4 +97,5 @@ class MainActivity : AppCompatActivity() {
       }
     }
   }
+
 }

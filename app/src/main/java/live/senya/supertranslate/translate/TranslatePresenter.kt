@@ -29,8 +29,6 @@ class TranslatePresenter @Inject constructor(
   private val subscriptions = CompositeDisposable()
   private lateinit var sourceLang: Lang
   private lateinit var targetLang: Lang
-  private lateinit var notTranslatedText: String
-
 
   override fun unsubscribe() {
     subscriptions.clear()
